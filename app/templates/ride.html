@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% from "components.html" import action_form, badge, confirmation, route_stops %}
+{% block title %}Ride #{{ ride.id }} | CampusRide QA Lab{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <a class="back-link" href="/{{ page }}">{{ {'passenger': 'My rides', 'rider': 'Rider dashboard', 'admin': 'Admin dashboard'}[page] }}</a>
+  <div class="heading-row">
+    <h1>Ride #{{ ride.id }}</h1>
+    <div data-testid="ride-status">{{ badge(ride.status) }}</div>
+  </div>
+</header>
+
+<div class="two-column">
+  <section class="panel form-panel ride-overview" aria-labelledby="summary-title">
+    <h2 id="summary-title">Ride summary</h2>
+    {{ route_stops(ride) }}
+    <dl class="detail-grid">
+      <div><dt>Confirmed fare</dt><dd data-testid="confirmed-fare">BDT {{ ride.fare_bdt }}</dd></div>
+      <div><dt>Preference</dt><dd>{{ preference_label(ride.preference) }}</dd></div>
+      <div><dt>Passenger</dt><dd>{{ ride.passenger_name }}</dd></div>
+      <div><dt>Rider</dt><dd>{{ ride.rider_name or 'Awaiting assignment' }}</dd></div>
+    </dl>
+    {% if can_cancel %}
+      {{ action_form('/api/rides/' ~ ride.id ~ '/cancel', 'Cancel ride', 'cancel-ride', style='danger', confirm='Cancel this ride?') }}
+    {% endif %}
+  </section>
+
+  <section class="panel form-panel" aria-labelledby="progress-title" data-testid="trip-progress">
+    <h2 id="progress-title">Trip progress</h2>
+    {% if ride.status == 'cancelled' %}
+      <p class="subtext">This ride was cancelled before departure.</p>
+    {% elif ride.status == 'requested' %}
+      <p class="subtext">Waiting for an approved rider to accept the request.</p>
+    {% else %}
+      <div class="trip-stages">
+        <div class="trip-stage">
+          <h3>Start confirmations</h3>
+          <ul class="confirmations" data-testid="start-confirmations">
+            {{ confirmation('Passenger', ride.passenger_started) }}
+            {{ confirmation('Rider', ride.rider_started) }}
+          </ul>
+          {% if can_start %}
+            {{ action_form('/api/rides/' ~ ride.id ~ '/start', 'Confirm start', 'confirm-start') }}
+          {% endif %}
+        </div>
+        {% if ride.status in ['in_progress', 'completed'] %}
+          <div class="trip-stage">
+            <h3>Completion confirmations</h3>
+            <ul class="confirmations" data-testid="completion-confirmations">
+              {{ confirmation('Passenger', ride.passenger_completed) }}
+              {{ confirmation('Rider', ride.rider_completed) }}
+            </ul>
+            {% if can_complete %}
+              {{ action_form('/api/rides/' ~ ride.id ~ '/complete', 'Confirm completion', 'confirm-completion') }}
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      {% if ride.status != 'completed' %}
+        <p class="field-hint">Both participants must confirm to move to the next stage.</p>
+      {% endif %}
+    {% endif %}
+  </section>
+</div>
+
+{% if ride.status == 'completed' and not viewer.is_admin %}
+  <section class="section panel form-panel narrow-panel" aria-labelledby="rating-title" data-testid="ride-ratings">
+    <h2 id="rating-title">Ratings</h2>
+    {% if ride.received_rating is none %}<p class="subtext">Ratings are shared after both participants submit.</p>{% endif %}
+    {% if can_rate %}
+      <form class="stack-form" action="/api/rides/{{ ride.id }}/rating" method="post" data-api-form>
+        <label for="rating">Rate your trip partner</label>
+        <select id="rating" name="score" required data-number data-testid="rating-select">
+          <option value="" disabled selected>Select a score</option>
+          {% for score in range(5, 0, -1) %}<option value="{{ score }}">{{ score }} out of 5</option>{% endfor %}
+        </select>
+        <p class="notice notice-error" data-error role="alert" hidden></p>
+        <button class="button button-primary" type="submit" data-testid="submit-rating">Submit rating</button>
+      </form>
+    {% else %}
+      <dl class="detail-grid">
+        <div><dt>Your rating</dt><dd data-testid="my-rating">{{ ride.my_rating }} / 5</dd></div>
+        {% if ride.received_rating is not none %}
+          <div><dt>Rating received</dt><dd data-testid="received-rating">{{ ride.received_rating }} / 5</dd></div>
+        {% endif %}
+      </dl>
+    {% endif %}
+  </section>
+{% endif %}
+{% endblock %}

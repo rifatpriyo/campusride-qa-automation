@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% from "components.html" import badge, ride_cards, ride_history %}
+{% block title %}Rider dashboard | CampusRide QA Lab{% endblock %}
+{% block content %}
+<header class="dashboard-hero">
+  <div>
+    <h1>Rider dashboard</h1>
+    <p class="hero-meta">{{ 'Browse requests and manage your assigned rides.' if approved else 'Request approval to start accepting campus rides.' }}</p>
+  </div>
+  <div data-testid="rider-verification-status">
+    {% if verification %}{{ badge(verification.status) }}{% else %}<span class="badge badge-neutral">Unverified</span>{% endif %}
+  </div>
+</header>
+
+{% if approved %}
+  <section class="section" aria-labelledby="available-title" data-testid="available-rides">
+    <div class="section-header">
+      <h2 id="available-title">Available rides</h2>
+      <p>Showing requests your test profile can accept.</p>
+    </div>
+    {% if available %}{{ ride_cards(available, available=true) }}
+    {% else %}<p class="empty-state">No eligible requests are available right now.</p>{% endif %}
+  </section>
+  <section class="section" aria-labelledby="active-title" data-testid="rider-active">
+    <div class="section-header"><h2 id="active-title">Assigned rides</h2></div>
+    {% if active %}{{ ride_cards(active) }}{% else %}<p class="empty-state">Rides you accept will appear here.</p>{% endif %}
+  </section>
+  <section class="section" aria-labelledby="history-title">
+    <div class="section-header"><h2 id="history-title">Ride history</h2></div>
+    {{ ride_history(history, "Your completed and cancelled rides will appear here.") }}
+  </section>
+{% else %}
+  <section class="section panel form-panel narrow-panel" aria-labelledby="verification-title">
+    <h2 id="verification-title">Rider verification</h2>
+    {% if verification and verification.status == 'pending' %}
+      <p class="subtext">Your request is waiting for an admin review.</p>
+      <p class="verification-reference">Mock reference <strong>{{ verification.mock_reference }}</strong></p>
+    {% else %}
+      {% if verification and verification.status == 'rejected' %}
+        <p class="notice">Your last request was rejected. You can submit another mock reference.</p>
+      {% endif %}
+      <form class="stack-form" action="/api/rider/verification" method="post" data-api-form data-testid="verification-form">
+        <label for="mock-reference">Mock reference</label>
+        <input id="mock-reference" name="mock_reference" placeholder="MOCK-CAMPUS01" pattern="MOCK-[A-Z0-9]{3,12}"
+               maxlength="17" required aria-describedby="reference-hint" data-testid="mock-reference">
+        <p class="field-hint" id="reference-hint">Use a fictional code like MOCK-CAMPUS01.</p>
+        <p class="notice notice-error" role="alert" data-error hidden></p>
+        <button class="button button-primary" type="submit" data-testid="submit-verification">Submit for review</button>
+      </form>
+    {% endif %}
+  </section>
+{% endif %}
+{% endblock %}

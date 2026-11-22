@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e2941">
+  <title>{% block title %}CampusRide QA Lab{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+  <script src="{{ url_for('static', path='app.js') }}" defer></script>
+</head>
+<body>
+  {% set viewer = request.state.viewer | default(none) %}
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="/" aria-label="CampusRide QA Lab home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>CampusRide <small>QA Lab</small></span>
+      </a>
+      {% if viewer %}
+        <nav class="primary-nav" aria-label="Dashboard">
+          {% if viewer.is_admin %}
+            <a href="/admin" {% if page == 'admin' %}aria-current="page"{% endif %}>Admin</a>
+          {% else %}
+            <a href="/passenger" {% if page == 'passenger' %}aria-current="page"{% endif %}>Passenger</a>
+            <a href="/rider" {% if page == 'rider' %}aria-current="page"{% endif %}>Rider</a>
+          {% endif %}
+        </nav>
+        <div class="account">
+          <span class="avatar" aria-hidden="true">{{ viewer.name[:1] | upper }}</span>
+          <span class="account-name">{{ viewer.name }}</span>
+          <form action="/api/auth/logout" method="post" data-api-form data-next="/login">
+            <button class="button button-small button-quiet" type="submit" data-testid="logout">Sign out</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  </header>
+  <main id="main" class="shell {% block main_class %}workspace{% endblock %}">
+    <p class="notice notice-error" id="page-error" role="alert" hidden></p>
+    <noscript><p class="notice">Enable JavaScript to sign in and submit actions.</p></noscript>
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <span>Fictional campus data</span>
+      <a href="/docs">API documentation</a>
+    </div>
+  </footer>
+</body>
+</html>

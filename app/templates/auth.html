@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sign in' if form == 'login' else 'Create an account' }} | CampusRide QA Lab{% endblock %}
+{% block main_class %}auth-main{% endblock %}
+{% block content %}
+<div class="auth-layout">
+  <div class="auth-photo">
+    <div class="auth-photo-copy">
+      <p class="auth-photo-title">Campus rides,<br> simulated.</p>
+      <p>Explore the full ride lifecycle with fictional student accounts and campus stops.</p>
+    </div>
+  </div>
+  <div class="auth-panel">
+    {% if form == "login" %}
+      <h1>Sign in</h1>
+      <p class="subtext">Use your <strong>@campus.example</strong> account.</p>
+      {% if registered %}<p class="notice notice-success" role="status">Account created. You can sign in now.</p>{% endif %}
+      <form class="stack-form" action="/api/auth/login" method="post" data-api-form data-next="account" data-testid="login-form">
+        <label for="login-email">Campus email</label>
+        <input id="login-email" type="email" name="email" maxlength="100" placeholder="name@campus.example"
+               autocomplete="username" required data-testid="login-email">
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" name="password" maxlength="128"
+               autocomplete="current-password" required data-testid="login-password">
+        <p class="notice notice-error" data-error role="alert" hidden></p>
+        <button class="button button-primary" type="submit" data-testid="login-submit">Sign in</button>
+      </form>
+      <p class="auth-switch">New to CampusRide? <a href="/register" data-testid="register-link">Create an account</a></p>
+      {% if demo_accounts %}
+        <section class="demo-panel" aria-labelledby="demo-title" data-demo-password="{{ demo_password }}">
+          <h2 id="demo-title">Try a demo account</h2>
+          <p>Select a role to fill in the sign-in form.</p>
+          <div class="demo-options">
+            {% for role, account in demo_accounts %}
+              <button class="demo-option" type="button" data-demo-email="{{ account.email }}" data-testid="demo-{{ role | lower }}">
+                <strong>{{ role }}</strong><span>{{ account.name.split()[0] }}</span>
+              </button>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    {% else %}
+      <h1>Create an account</h1>
+      <p class="subtext">Use a fictional <strong>@campus.example</strong> address.</p>
+      <form class="stack-form" action="/api/auth/register" method="post" data-api-form data-next="/login?registered=1" data-testid="register-form">
+        <label for="register-name">Display name</label>
+        <input id="register-name" name="name" minlength="2" maxlength="60" autocomplete="name" required data-testid="register-name">
+        <label for="register-email">Campus email</label>
+        <input id="register-email" type="email" name="email" maxlength="100" placeholder="name@campus.example"
+               autocomplete="username" required data-testid="register-email">
+        <label for="register-password">Password</label>
+        <input id="register-password" type="password" name="password" minlength="10" maxlength="128"
+               autocomplete="new-password" aria-describedby="password-hint" required data-testid="register-password">
+        <p class="field-hint" id="password-hint">Use 10 or more characters with a letter and a digit.</p>
+        <label class="check-field">
+          <input type="checkbox" name="women_only_eligible" data-testid="register-eligibility">
+          <span>Enable women-only rides for this fictional test profile</span>
+        </label>
+        <p class="notice notice-error" data-error role="alert" hidden></p>
+        <button class="button button-primary" type="submit" data-testid="register-submit">Create account</button>
+      </form>
+      <p class="auth-switch">Already have an account? <a href="/login">Sign in</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

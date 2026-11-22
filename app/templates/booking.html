@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Book a ride | CampusRide QA Lab{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <a class="back-link" href="/passenger">My rides</a>
+  <h1>Book a ride</h1>
+  <p class="subtext">Choose two campus stops and review the fixed fare before booking.</p>
+</header>
+
+<div class="two-column">
+  <section class="panel form-panel" aria-labelledby="route-title">
+    <h2 id="route-title">Ride details</h2>
+    <form class="stack-form" action="/api/rides/quote" method="post" data-quote-form data-testid="booking-form">
+      <label for="pickup">Pickup location</label>
+      <select id="pickup" name="pickup" required data-testid="pickup-select">
+        <option value="" disabled selected>Select a pickup stop</option>
+        {% for stop in stops %}<option value="{{ stop.value }}">{{ stop.label }}</option>{% endfor %}
+      </select>
+      <label for="destination">Destination</label>
+      <select id="destination" name="destination" required data-testid="destination-select">
+        <option value="" disabled selected>Select a destination</option>
+        {% for stop in stops %}<option value="{{ stop.value }}">{{ stop.label }}</option>{% endfor %}
+      </select>
+      <label for="preference">Ride preference</label>
+      <select id="preference" name="preference" data-testid="ride-preference-select">
+        <option value="regular">Regular</option>
+        <option value="women_only" {% if not viewer.women_only_eligible %}disabled{% endif %}>Women-only</option>
+      </select>
+      {% if not viewer.women_only_eligible %}
+        <p class="field-hint">Women-only rides require an eligible fictional test profile.</p>
+      {% endif %}
+      <p class="notice notice-error" data-error role="alert" hidden></p>
+      <button class="button button-primary" type="submit" data-testid="get-fare">Get fare quote</button>
+    </form>
+  </section>
+
+  <section class="panel quote-panel" aria-labelledby="quote-title" data-testid="fare-panel">
+    <h2 id="quote-title">Fare quote</h2>
+    <p class="subtext" data-quote-placeholder>The fare will appear here once you request a quote.</p>
+    <div data-quote-details hidden>
+      <p class="quote-total" aria-live="polite" data-testid="quoted-fare">BDT <strong data-fare></strong></p>
+      <p class="subtext">Your quote is valid for 10 minutes. The fare stays fixed after you book.</p>
+    </div>
+    <form class="stack-form" action="/api/rides" method="post" data-api-form data-next="ride" data-confirm-booking>
+      <input type="hidden" name="quote_id">
+      <p class="notice notice-error" data-error role="alert" hidden></p>
+      <button class="button button-primary" type="submit" disabled data-testid="confirm-booking">Confirm booking</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

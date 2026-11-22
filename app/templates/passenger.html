@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "components.html" import ride_cards, ride_history %}
+{% block title %}My rides | CampusRide QA Lab{% endblock %}
+{% block content %}
+<header class="dashboard-hero passenger-hero">
+  <div>
+    <p class="section-name">Passenger dashboard</p>
+    <h1>My rides</h1>
+    <p class="hero-meta">{{ active | length }} active {{ 'ride' if active | length == 1 else 'rides' }}</p>
+  </div>
+  <a class="button button-on-dark" href="/book" data-testid="book-ride">Book a ride</a>
+</header>
+
+<section class="section" aria-labelledby="active-title" data-testid="passenger-active">
+  <div class="section-header"><h2 id="active-title">Active rides</h2></div>
+  {% if active %}
+    {{ ride_cards(active) }}
+  {% else %}
+    <p class="empty-state">You have no active rides. Book a ride to get started.</p>
+  {% endif %}
+</section>
+
+<section class="section" aria-labelledby="history-title">
+  <div class="section-header"><h2 id="history-title">Ride history</h2></div>
+  {{ ride_history(history, "Your completed and cancelled rides will appear here.") }}
+</section>
+{% endblock %}

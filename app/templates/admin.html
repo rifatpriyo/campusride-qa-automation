@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "components.html" import badge %}
+{% block title %}Admin dashboard | CampusRide QA Lab{% endblock %}
+{% block content %}
+<header class="dashboard-hero">
+  <div>
+    <h1>Admin dashboard</h1>
+    <p class="hero-meta">Review rider requests, student accounts, and ride activity.</p>
+  </div>
+</header>
+
+<section class="section" aria-label="System statistics" data-testid="admin-stats">
+  <dl class="stat-grid">
+    <div class="panel stat"><dt>Students</dt><dd>{{ dashboard.stats.students }}</dd></div>
+    <div class="panel stat"><dt>Approved riders</dt><dd>{{ dashboard.stats.approved_riders }}</dd></div>
+    <div class="panel stat stat-accent"><dt>Pending reviews</dt><dd>{{ dashboard.stats.pending_verifications }}</dd></div>
+    <div class="panel stat"><dt>Total rides</dt><dd>{{ dashboard.rides | length }}</dd></div>
+  </dl>
+</section>
+
+<section class="section" aria-labelledby="approval-title">
+  <div class="section-header"><h2 id="approval-title">Pending rider approvals</h2></div>
+  {% if dashboard.pending_verifications %}
+    <div class="panel table-wrap" role="region" aria-labelledby="approval-title" tabindex="0">
+      <table data-testid="pending-verifications">
+        <thead><tr><th scope="col">Student</th><th scope="col">Mock reference</th><th scope="col">Review</th></tr></thead>
+        <tbody>
+          {% for verification in dashboard.pending_verifications %}
+            <tr data-testid="verification-row" data-user-id="{{ verification.user_id }}">
+              <td><strong>{{ verification.name }}</strong><small>{{ verification.email }}</small></td>
+              <td class="mock-code">{{ verification.mock_reference }}</td>
+              <td>
+                <form action="/api/admin/verifications/{{ verification.user_id }}/decision" method="post" data-api-form>
+                  <div class="button-group">
+                    <button class="button button-primary button-small" type="submit" name="status" value="approved" data-testid="approve-rider">Approve</button>
+                    <button class="button button-danger button-small" type="submit" name="status" value="rejected" data-testid="reject-rider">Reject</button>
+                  </div>
+                  <p class="notice notice-error" data-error role="alert" hidden></p>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="empty-state" data-testid="no-pending-verifications">There are no pending rider approvals.</p>
+  {% endif %}
+</section>
+
+<section class="section" aria-labelledby="accounts-title">
+  <div class="section-header"><h2 id="accounts-title">Accounts</h2></div>
+  <div class="panel table-wrap" role="region" aria-labelledby="accounts-title" tabindex="0">
+    <table data-testid="student-accounts">
+      <thead><tr><th scope="col">Account</th><th scope="col">Roles</th><th scope="col">Rider status</th><th scope="col">Women-only</th></tr></thead>
+      <tbody>
+        {% for account in dashboard.accounts %}
+          <tr data-user-id="{{ account.id }}">
+            <td><strong>{{ account.name }}</strong><small>{{ account.email }}</small></td>
+            <td>{{ account.roles | map('capitalize') | join(', ') }}</td>
+            <td>{% if account.verification_status %}{{ badge(account.verification_status) }}
+                {% elif 'admin' in account.roles %}<span class="muted">N/A</span>
+                {% else %}<span class="muted">Unverified</span>{% endif %}</td>
+            <td>{{ 'Eligible' if account.women_only_eligible else 'Off' }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="rides-title">
+  <div class="section-header"><h2 id="rides-title">All rides</h2></div>
+  <ul class="status-totals" aria-label="Rides by status">
+    {% for status, count in dashboard.stats.rides_by_status.items() %}
+      <li>{{ status_label(status) }} <strong>{{ count }}</strong></li>
+    {% endfor %}
+  </ul>
+  {% if dashboard.rides %}
+    <div class="panel table-wrap" role="region" aria-labelledby="rides-title" tabindex="0">
+      <table data-testid="admin-rides">
+        <thead><tr><th scope="col">Ride</th><th scope="col">Route</th><th scope="col">Preference</th><th scope="col">Fare</th><th scope="col">Status</th></tr></thead>
+        <tbody>
+          {% for ride in dashboard.rides %}
+            <tr>
+              <td><a href="/rides/{{ ride.id }}" aria-label="View ride {{ ride.id }}">#{{ ride.id }}</a></td>
+              <td>{{ ride.pickup.label }} to {{ ride.destination.label }}</td>
+              <td>{{ preference_label(ride.preference) }}</td>
+              <td class="nowrap">BDT {{ ride.fare_bdt }}</td>
+              <td>{{ badge(ride.status) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="empty-state">No rides have been booked yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

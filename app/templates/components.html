@@ -1,0 +1,71 @@
+{% macro badge(status) %}
+  <span class="badge badge-{{ status }}">{{ status_label(status) }}</span>
+{% endmacro %}
+
+{% macro route_stops(ride) %}
+  <ol class="route-stops" aria-label="Ride route">
+    <li><span class="sr-only">Pickup </span>{{ ride.pickup.label }}</li>
+    <li><span class="sr-only">Destination </span>{{ ride.destination.label }}</li>
+  </ol>
+{% endmacro %}
+
+{% macro action_form(endpoint, label, test_id, style="primary", next="", confirm="") %}
+  <form class="action-form" action="{{ endpoint }}" method="post" data-api-form
+        {% if next %}data-next="{{ next }}"{% endif %} {% if confirm %}data-confirm="{{ confirm }}"{% endif %}>
+    <button class="button button-{{ style }}" type="submit" data-testid="{{ test_id }}">{{ label }}</button>
+    <p class="notice notice-error" data-error role="alert" hidden></p>
+  </form>
+{% endmacro %}
+
+{% macro ride_cards(items, available=false) %}
+  <div class="ride-grid">
+    {% for ride in items %}
+      <article class="panel ride-card" data-testid="ride-card" data-ride-id="{{ ride.id }}">
+        <div class="card-top">
+          <span class="ride-reference">Ride #{{ ride.id }}</span>
+          {{ badge(ride.status) }}
+        </div>
+        {{ route_stops(ride) }}
+        <p class="ride-preference">{{ preference_label(ride.preference) }}</p>
+        <div class="ride-card-footer">
+          <span class="fare"><small>BDT</small> {{ ride.fare_bdt }}</span>
+          {% if available %}
+            {{ action_form('/api/rides/' ~ ride.id ~ '/accept', 'Accept ride', 'accept-ride', next='ride') }}
+          {% else %}
+            <a class="button button-outline" href="/rides/{{ ride.id }}" data-testid="view-ride"
+               aria-label="View ride {{ ride.id }}">View ride</a>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro ride_history(items, empty) %}
+  {% if items %}
+    <ul class="panel history-list" data-testid="ride-history">
+      {% for ride in items %}
+        <li class="history-row" data-ride-id="{{ ride.id }}">
+          <div>
+            <strong>{{ ride.pickup.label }} <span class="route-separator">to</span> {{ ride.destination.label }}</strong>
+            <small>Ride #{{ ride.id }} · {{ preference_label(ride.preference) }}</small>
+          </div>
+          {{ badge(ride.status) }}
+          <span class="history-fare">BDT {{ ride.fare_bdt }}</span>
+          <a href="/rides/{{ ride.id }}" data-testid="view-ride" aria-label="View ride {{ ride.id }}">View ride</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="empty-state">{{ empty }}</p>
+  {% endif %}
+{% endmacro %}
+
+{% macro confirmation(label, completed) %}
+  <li>
+    <span>{{ label }}</span>
+    <span class="badge {{ 'badge-approved' if completed else 'badge-neutral' }}">
+      {{ 'Confirmed' if completed else 'Waiting' }}
+    </span>
+  </li>
+{% endmacro %}
