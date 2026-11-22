@@ -1,4 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Response
+from fastapi.responses import JSONResponse
+
+from . import bug_lab
 
 from .dependencies import SESSION_COOKIE, CurrentUser, Db, SessionToken, require_same_origin_for_writes
 from .models import Verification
@@ -90,14 +93,16 @@ def book_ride(data: Booking, db: Db, user: CurrentUser) -> RideDetail:
     return rides.ride_detail(rides.book_ride(db, user, data.quote_id), user)
 
 
-@router.get("/rides/{ride_id}", tags=["Rides"])
-def ride_detail(ride_id: int, db: Db, user: CurrentUser) -> RideDetail:
-    return rides.ride_detail(rides.visible_ride(db, user, ride_id, allow_admin=True), user)
+@router.get("/rides/{ride_id}", response_model=RideDetail, tags=["Rides"])
+def ride_detail(ride_id: int, db: Db, user: CurrentUser, defect_mode: bug_lab.Active) -> RideDetail | JSONResponse:
+    ride = rides.visible_ride(db, user, ride_id, allow_admin=True)
+    detail = rides.ride_detail(ride, user)
+    return bug_lab.detail_with_defects(ride, user, detail) if defect_mode else detail
 
 
 @router.post("/rides/{ride_id}/accept", tags=["Rides"])
-def accept_ride(ride_id: int, db: Db, user: CurrentUser) -> RideDetail:
-    return rides.ride_detail(rides.accept_ride(db, user, ride_id), user)
+def accept_ride(ride_id: int, db: Db, user: CurrentUser, defect_mode: bug_lab.Active) -> RideDetail:
+    return rides.ride_detail(rides.accept_ride(db, user, ride_id, defect_mode=defect_mode), user)
 
 
 @router.post("/rides/{ride_id}/cancel", tags=["Rides"])

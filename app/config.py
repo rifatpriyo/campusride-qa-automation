@@ -11,15 +11,22 @@ ROOT = Path(__file__).resolve().parent.parent
 class Settings:
     database_path: Path = ROOT / "instance" / "campusride.db"
     secure_cookie: bool = False
+    demo_bug_mode: bool = False
 
     @classmethod
     def from_env(cls) -> "Settings":
         local = dotenv_values(ROOT / ".env")
         default_path = "instance/campusride.db"
         path = os.getenv("CAMPUSRIDE_DB_PATH", local.get("CAMPUSRIDE_DB_PATH") or default_path)
-        secure = os.getenv(
-            "CAMPUSRIDE_SECURE_COOKIE", local.get("CAMPUSRIDE_SECURE_COOKIE") or "false"
-        ).lower()
-        if secure not in {"true", "false"}:
-            raise ValueError("CAMPUSRIDE_SECURE_COOKIE must be true or false.")
-        return cls(database_path=(ROOT / path).resolve(), secure_cookie=secure == "true")
+
+        def flag(name: str) -> bool:
+            value = os.getenv(name, local.get(name) or "false").lower()
+            if value not in {"true", "false"}:
+                raise ValueError(f"{name} must be true or false.")
+            return value == "true"
+
+        return cls(
+            database_path=(ROOT / path).resolve(),
+            secure_cookie=flag("CAMPUSRIDE_SECURE_COOKIE"),
+            demo_bug_mode=flag("DEMO_BUG_MODE"),
+        )

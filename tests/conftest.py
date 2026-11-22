@@ -11,6 +11,22 @@ from app.main import create_app
 from app.models import Base
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--bug-lab", action="store_true",
+        help="Use DEMO_BUG_MODE in the four controlled-defect regression tests.",
+    )
+
+
+@pytest.fixture
+def demo_bug_mode():
+    return False
+
+
+def local_client(app):
+    return TestClient(app, base_url="http://127.0.0.1", client=("127.0.0.1", 50000))
+
+
 @pytest.fixture(scope="session")
 def demo_database(tmp_path_factory):
     path = tmp_path_factory.mktemp("demo") / "seed.db"
@@ -25,11 +41,11 @@ def demo_database(tmp_path_factory):
 
 
 @pytest.fixture
-def site(tmp_path, demo_database):
+def site(tmp_path, demo_database, demo_bug_mode):
     path = tmp_path / "campusride.db"
     shutil.copyfile(demo_database, path)
-    app = create_app(Settings(database_path=path))
-    with TestClient(app) as client:
+    app = create_app(Settings(database_path=path, demo_bug_mode=demo_bug_mode))
+    with local_client(app) as client:
         yield app, client
 
 
@@ -44,7 +60,7 @@ def sign_in(site):
     clients = []
 
     def signed_in_client(account):
-        client = TestClient(app)
+        client = local_client(app)
         clients.append(client)
         response = client.post("/api/auth/login", json={
             "email": DEMO_ACCOUNTS[account].email,

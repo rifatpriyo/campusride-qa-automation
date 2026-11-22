@@ -22,12 +22,12 @@ def book(client, **changes):
     return response.json()
 
 
-def post_together(path, first, second):
+def post_together(path, first, second, **request_options):
     barrier = Barrier(2, timeout=5)
 
     def post(client):
         barrier.wait()
-        return client.post(path)
+        return client.post(path, **request_options)
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         return list(pool.map(post, (first, second)))
@@ -68,6 +68,19 @@ def test_expired_quote_cannot_be_booked(sign_in, monkeypatch):
     assert passenger.post("/api/rides", json={"quote_id": result["id"]}).status_code == 409
 
 
+def test_concurrent_redemption_creates_only_one_ride(sign_in):
+    first, second = sign_in("mira"), sign_in("mira")
+    before = {ride["id"] for ride in first.get("/api/rides").json()}
+    saved_quote = quote(first)
+    responses = post_together("/api/rides", first, second, json={"quote_id": saved_quote["id"]})
+
+    assert sorted(response.status_code for response in responses) == [201, 409]
+    booked = next(response.json() for response in responses if response.status_code == 201)
+    after = {ride["id"] for ride in first.get("/api/rides").json()}
+    assert after - before == {booked["id"]}
+    assert booked["fare_bdt"] == saved_quote["fare_bdt"]
+
+
 def test_listing_and_acceptance_require_explicit_eligibility(sign_in):
     passenger, regular_rider, eligible_rider = (sign_in(key) for key in ("mira", "tariq", "anika"))
     restricted = book(passenger, preference="women_only")
@@ -85,6 +98,8 @@ def test_listing_and_acceptance_require_explicit_eligibility(sign_in):
     assert regular_rider.post("/api/rides/quote", json={**ROUTE, "preference": "women_only"}).status_code == 403
     assert eligible_rider.post(f"/api/rides/{own['id']}/accept").status_code == 403
     assert regular_rider.post(f"/api/rides/{restricted['id']}/accept").status_code == 403
+    untouched = passenger.get(f"/api/rides/{restricted['id']}").json()
+    assert (untouched["status"], untouched["rider_name"]) == ("requested", None)
     assert eligible_rider.post(f"/api/rides/{restricted['id']}/accept").status_code == 200
 
 
@@ -96,6 +111,19 @@ def test_only_one_rider_can_accept_concurrently(sign_in):
     assert sorted(result.status_code for result in results) == [200, 409]
     winner = next(result.json() for result in results if result.status_code == 200)
     assert passenger.get(path).json()["rider_name"] == winner["rider_name"]
+
+
+def test_assigned_rider_cannot_replay_acceptance(sign_in):
+    passenger, rider = sign_in("mira"), sign_in("tariq")
+    ride = book(passenger)
+    path = f"/api/rides/{ride['id']}"
+
+    assert rider.post(f"{path}/accept").status_code == 200
+    assert rider.post(f"{path}/accept").status_code == 409
+    detail = passenger.get(path).json()
+    assert (detail["status"], detail["rider_name"], detail["fare_bdt"]) == (
+        "accepted", "Tariq Hasan", ride["fare_bdt"],
+    )
 
 
 def test_trip_lifecycle_and_two_sided_rating_privacy(sign_in):
@@ -131,8 +159,11 @@ def test_trip_lifecycle_and_two_sided_rating_privacy(sign_in):
     assert outsider.post(f"{path}/rating", json={"score": 1}).status_code == 404
     second_rating = rider.post(f"{path}/rating", json={"score": 4}).json()
     assert second_rating["received_rating"] == 5
-    assert passenger.get(path).json()["received_rating"] == 4
-    assert admin.get(path).json()["received_rating"] is None
+    finished = passenger.get(path).json()
+    assert finished["received_rating"] == 4
+    assert finished["fare_bdt"] == ride["fare_bdt"] == 80
+    admin_detail = admin.get(path).json()
+    assert admin_detail["my_rating"] is None and admin_detail["received_rating"] is None
     assert passenger.post(f"{path}/rating", json={"score": 2}).status_code == 409
 
 

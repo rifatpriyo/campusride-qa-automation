@@ -1,0 +1,32 @@
+Phase 1 baseline before Phase 3 code changes
+Baseline commit 16243a9
+DEMO_BUG_MODE=false
+.\.venv\Scripts\python.exe -m pytest -vv --color=no --tb=short
+
+============================= test session starts =============================
+platform win32 -- Python 3.11.5, pytest-9.2.0, pluggy-1.7.0 -- Z:\sqa intern apply project\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: Z:\sqa intern apply project
+plugins: anyio-4.16.0
+collecting ... collected 16 items
+
+tests/test_accounts.py::test_registration_validates_data_and_does_not_grant_roles PASSED [  6%]
+tests/test_accounts.py::test_login_and_logout_invalidate_the_session PASSED [ 12%]
+tests/test_accounts.py::test_rider_rejection_resubmission_and_approval PASSED [ 18%]
+tests/test_accounts.py::test_admin_dashboard_and_demo_seed_are_repeatable PASSED [ 25%]
+tests/test_pages.py::test_health_and_local_swagger_assets PASSED         [ 31%]
+tests/test_pages.py::test_pages_render_with_stable_controls_and_permissions PASSED [ 37%]
+tests/test_rides.py::test_quote_validates_the_route[changes0] PASSED     [ 43%]
+tests/test_rides.py::test_quote_validates_the_route[changes1] PASSED     [ 50%]
+tests/test_rides.py::test_quote_validates_the_route[changes2] PASSED     [ 56%]
+tests/test_rides.py::test_booking_requires_an_owned_quote_and_keeps_its_fare PASSED [ 62%]
+tests/test_rides.py::test_expired_quote_cannot_be_booked PASSED          [ 68%]
+tests/test_rides.py::test_listing_and_acceptance_require_explicit_eligibility PASSED [ 75%]
+tests/test_rides.py::test_only_one_rider_can_accept_concurrently PASSED  [ 81%]
+tests/test_rides.py::test_trip_lifecycle_and_two_sided_rating_privacy PASSED [ 87%]
+tests/test_rides.py::test_simultaneous_confirmations_finalize_each_stage PASSED [ 93%]
+tests/test_rides.py::test_cancellation_is_allowed_until_the_trip_starts PASSED [100%]
+
+============================= 16 passed in 10.80s =============================
+
+Pytest exit code 0

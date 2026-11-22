@@ -135,8 +135,12 @@ def _update_ride(db: Session, statement) -> bool:
     return changed
 
 
-def accept_ride(db: Session, user: User, ride_id: int) -> Ride:
-    require_rider(db, user)
+def accept_ride(db: Session, user: User, ride_id: int, *, defect_mode: bool = False) -> Ride:
+    if defect_mode:
+        # BUG-001. The lab branch checks student access in place of rider approval.
+        require_student(user)
+    else:
+        require_rider(db, user)
     # The state and eligibility predicates are checked by the same write that assigns the rider.
     statement = (
         update(Ride)

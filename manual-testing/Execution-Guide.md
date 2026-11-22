@@ -9,6 +9,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 $env:CAMPUSRIDE_DB_PATH = 'instance/campusride-manual.db'
 $env:CAMPUSRIDE_SECURE_COOKIE = 'false'
+$env:DEMO_BUG_MODE = 'false'
 .\.venv\Scripts\python.exe -m app.demo
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
@@ -59,6 +60,7 @@ Stop the test server with Ctrl+C. Point the next run at a new file to preserve e
 $qaStamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
 $env:CAMPUSRIDE_DB_PATH = "instance/campusride-manual-$qaStamp.db"
 $env:CAMPUSRIDE_SECURE_COOKIE = 'false'
+$env:DEMO_BUG_MODE = 'false'
 .\.venv\Scripts\python.exe -m app.demo
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```

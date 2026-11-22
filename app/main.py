@@ -8,7 +8,7 @@ from fastapi_offline import FastAPIOffline
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
-from . import api, web
+from . import api, bug_lab, web
 from .config import ROOT, Settings
 from .db import open_database
 from .dependencies import Db
@@ -73,6 +73,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok"}
 
     app.include_router(api.router)
+    if settings.demo_bug_mode:
+        app.include_router(bug_lab.router)
     app.include_router(web.router)
     return app
 

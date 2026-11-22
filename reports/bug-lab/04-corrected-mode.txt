@@ -1,0 +1,20 @@
+Corrected behavior, same four regression tests
+Started 2026-11-22 09:50:10Z
+DEMO_BUG_MODE=false
+.\.venv\Scripts\python.exe -m pytest -vv --color=no --tb=short --bug-lab tests/test_defect_regressions.py
+
+============================= test session starts =============================
+platform win32 -- Python 3.11.5, pytest-9.2.0, pluggy-1.7.0 -- Z:\sqa intern apply project\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: Z:\sqa intern apply project
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+tests/test_defect_regressions.py::test_bug_001_requires_rider_approval PASSED [ 25%]
+tests/test_defect_regressions.py::test_bug_002_preserves_the_booked_fare PASSED [ 50%]
+tests/test_defect_regressions.py::test_bug_003_keeps_a_single_rating_private PASSED [ 75%]
+tests/test_defect_regressions.py::test_bug_004_omits_phone_from_ride_details PASSED [100%]
+
+============================== 4 passed in 3.02s ==============================
+
+Pytest exit code 0

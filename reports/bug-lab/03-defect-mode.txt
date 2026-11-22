@@ -1,0 +1,102 @@
+Controlled defect demonstration, failures expected
+Started 2026-11-22 09:50:06Z
+DEMO_BUG_MODE=true
+.\.venv\Scripts\python.exe -m pytest -vv --color=no --tb=short --bug-lab tests/test_defect_regressions.py
+
+============================= test session starts =============================
+platform win32 -- Python 3.11.5, pytest-9.2.0, pluggy-1.7.0 -- Z:\sqa intern apply project\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: Z:\sqa intern apply project
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+tests/test_defect_regressions.py::test_bug_001_requires_rider_approval FAILED [ 25%]
+tests/test_defect_regressions.py::test_bug_002_preserves_the_booked_fare FAILED [ 50%]
+tests/test_defect_regressions.py::test_bug_003_keeps_a_single_rating_private FAILED [ 75%]
+tests/test_defect_regressions.py::test_bug_004_omits_phone_from_ride_details FAILED [100%]
+
+================================== FAILURES ===================================
+____________________ test_bug_001_requires_rider_approval _____________________
+tests\test_defect_regressions.py:23: in test_bug_001_requires_rider_approval
+    assert (response.status_code, stored["status"], stored["rider_name"]) == (403, "requested", None), (
+E   AssertionError: BUG-001 acceptance returned HTTP 200; ride status was accepted with rider 'Mira Rahman'
+E   assert (200, 'accepted', 'Mira Rahman') == (403, 'requested', None)
+E     
+E     At index 0 diff: 200 != 403
+E     
+E     Full diff: (-: missing in left side, +: extra in left side)
+E       (
+E     -     403,
+E     ?     ^ ^
+E     +     200,
+E     ?     ^ ^
+E     -     'requested',
+E     -     None,
+E     +     'accepted',
+E     +     'Mira Rahman',
+E       )
+___________________ test_bug_002_preserves_the_booked_fare ____________________
+tests\test_defect_regressions.py:47: in test_bug_002_preserves_the_booked_fare
+    assert (edit.status_code, fare) == (404, 80), (
+E   AssertionError: BUG-002 fare edit returned HTTP 200; readback fare was 5 BDT
+E   assert (200, 5) == (404, 80)
+E     
+E     At index 0 diff: 200 != 404
+E     
+E     Full diff: (-: missing in left side, +: extra in left side)
+E       (
+E     -     404,
+E     -     80,
+E     ?     ^
+E     +     200,
+E     ?     ^^
+E     +     5,
+E       )
+_________________ test_bug_003_keeps_a_single_rating_private __________________
+tests\test_defect_regressions.py:65: in test_bug_003_keeps_a_single_rating_private
+    assert detail["received_rating"] is None, (
+E   AssertionError: BUG-003 unrated participant received score 5
+E   assert 5 is None
+_________________ test_bug_004_omits_phone_from_ride_details __________________
+tests\test_defect_regressions.py:82: in test_bug_004_omits_phone_from_ride_details
+    assert "passenger_phone" not in detail, (
+E   AssertionError: BUG-004 participant response contained passenger_phone='000-000-0104'
+E   assert 'passenger_phone' not in {'id': 4, 'pickup': 'student_center', 'destination': 'engineering_hall', 'preference': 'regular', 'fare_bdt': 50, 'status': 'accepted', 'created_at': '2026-01-12T06:00:00Z', 'passenger_name': 'Mira Rahman', 'rider_name': 'Tariq Hasan', 'passenger_started': False, 'rider_started': False, 'passenger_completed': False, 'rider_completed': False, 'my_rating': None, 'received_rating': None, 'passenger_phone': '000-000-0104'}
+=========================== short test summary info ===========================
+FAILED tests/test_defect_regressions.py::test_bug_001_requires_rider_approval - AssertionError: BUG-001 acceptance returned HTTP 200; ride status was accepted with rider 'Mira Rahman'
+assert (200, 'accepted', 'Mira Rahman') == (403, 'requested', None)
+  
+  At index 0 diff: 200 != 403
+  
+  Full diff: (-: missing in left side, +: extra in left side)
+    (
+  -     403,
+  ?     ^ ^
+  +     200,
+  ?     ^ ^
+  -     'requested',
+  -     None,
+  +     'accepted',
+  +     'Mira Rahman',
+    )
+FAILED tests/test_defect_regressions.py::test_bug_002_preserves_the_booked_fare - AssertionError: BUG-002 fare edit returned HTTP 200; readback fare was 5 BDT
+assert (200, 5) == (404, 80)
+  
+  At index 0 diff: 200 != 404
+  
+  Full diff: (-: missing in left side, +: extra in left side)
+    (
+  -     404,
+  -     80,
+  ?     ^
+  +     200,
+  ?     ^^
+  +     5,
+    )
+FAILED tests/test_defect_regressions.py::test_bug_003_keeps_a_single_rating_private - AssertionError: BUG-003 unrated participant received score 5
+assert 5 is None
+FAILED tests/test_defect_regressions.py::test_bug_004_omits_phone_from_ride_details - AssertionError: BUG-004 participant response contained passenger_phone='000-000-0104'
+assert 'passenger_phone' not in {'id': 4, 'pickup': 'student_center', 'destination': 'engineering_hall', 'preference': 'regular', 'fare_bdt': 50, 'status': 'accepted', 'created_at': '2026-01-12T06:00:00Z', 'passenger_name': 'Mira Rahman', 'rider_name': 'Tariq Hasan', 'passenger_started': False, 'rider_started': False, 'passenger_completed': False, 'rider_completed': False, 'my_rating': None, 'received_rating': None, 'passenger_phone': '000-000-0104'}
+============================== 4 failed in 3.19s ==============================
+
+Pytest exit code 1

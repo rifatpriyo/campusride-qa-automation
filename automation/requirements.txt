@@ -1,0 +1,4 @@
+-r ../requirements-dev.txt
+playwright==1.65.2
+pytest-playwright==0.10.0
+pytest-html==4.2.0

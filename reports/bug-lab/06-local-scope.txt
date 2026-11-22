@@ -1,0 +1,10 @@
+Controlled defect scope check
+DEMO_BUG_MODE=true
+Windows, Python 3.11.5. Synthetic ASGI addresses in FastAPI TestClient.
+Client and request host are independent inputs. This check made no network requests.
+
+ASGI client 192.0.2.11, request host 127.0.0.1: accept HTTP 403, fare PATCH HTTP 404, detail HTTP 200, mock phone present False
+ASGI client 127.0.0.1, request host campus.example: accept HTTP 403, fare PATCH HTTP 404, detail HTTP 200, mock phone present False
+Both in-process address checks passed.
+
+Python exit code 0

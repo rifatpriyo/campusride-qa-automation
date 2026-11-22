@@ -1,0 +1,3251 @@
+{
+  "info": {
+    "_postman_id": "2ea6f625-74d1-4e06-84c9-42d7834b6716",
+    "name": "CampusRide QA Lab API tests",
+    "description": "Run once from the first folder on a fresh local demo seed with DEMO_BUG_MODE=false. The environment supplies fictional credentials. Session cookies and IDs live only in the run. See api-testing/README.md for setup and reset instructions.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "response_shapes",
+      "value": "{\"health\":{\"type\":\"object\",\"properties\":{\"status\":{\"const\":\"ok\"}},\"required\":[\"status\"],\"additionalProperties\":false},\"openapi\":{\"type\":\"object\",\"required\":[\"openapi\",\"paths\"],\"properties\":{\"openapi\":{\"type\":\"string\",\"minLength\":1},\"paths\":{\"type\":\"object\"}}},\"profile\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"name\":{\"type\":\"string\",\"minLength\":1},\"email\":{\"type\":\"string\",\"pattern\":\"@campus\\\\.example$\"},\"roles\":{\"type\":\"array\",\"items\":{\"enum\":[\"passenger\",\"rider\",\"admin\"]},\"minItems\":1},\"women_only_eligible\":{\"type\":\"boolean\"},\"verification_status\":{\"enum\":[null,\"pending\",\"approved\",\"rejected\"]}},\"required\":[\"id\",\"name\",\"email\",\"roles\",\"women_only_eligible\",\"verification_status\"],\"additionalProperties\":false},\"verification\":{\"type\":\"object\",\"properties\":{\"user_id\":{\"type\":\"integer\",\"minimum\":1},\"mock_reference\":{\"type\":\"string\",\"pattern\":\"^MOCK-[A-Z0-9]{3,12}$\"},\"status\":{\"enum\":[\"pending\",\"approved\",\"rejected\"]}},\"required\":[\"user_id\",\"mock_reference\",\"status\"],\"additionalProperties\":false},\"no-verification\":{\"type\":\"null\"},\"quote\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"pattern\":\"^[a-f0-9]{32}$\"},\"pickup\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"destination\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"preference\":{\"enum\":[\"regular\",\"women_only\"]},\"fare_bdt\":{\"type\":\"integer\",\"minimum\":1},\"expires_at\":{\"type\":\"string\",\"format\":\"date-time\"}},\"required\":[\"id\",\"pickup\",\"destination\",\"preference\",\"fare_bdt\",\"expires_at\"],\"additionalProperties\":false},\"ride-list\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"pickup\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"destination\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"preference\":{\"enum\":[\"regular\",\"women_only\"]},\"fare_bdt\":{\"type\":\"integer\",\"minimum\":1},\"status\":{\"enum\":[\"requested\",\"accepted\",\"in_progress\",\"completed\",\"cancelled\"]},\"created_at\":{\"type\":\"string\",\"format\":\"date-time\"}},\"required\":[\"id\",\"pickup\",\"destination\",\"preference\",\"fare_bdt\",\"status\",\"created_at\"],\"additionalProperties\":false},\"minItems\":0},\"ride\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"pickup\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"destination\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"preference\":{\"enum\":[\"regular\",\"women_only\"]},\"fare_bdt\":{\"type\":\"integer\",\"minimum\":1},\"status\":{\"enum\":[\"requested\",\"accepted\",\"in_progress\",\"completed\",\"cancelled\"]},\"created_at\":{\"type\":\"string\",\"format\":\"date-time\"},\"passenger_name\":{\"type\":\"string\",\"minLength\":1},\"rider_name\":{\"type\":[\"string\",\"null\"]},\"passenger_started\":{\"type\":\"boolean\"},\"rider_started\":{\"type\":\"boolean\"},\"passenger_completed\":{\"type\":\"boolean\"},\"rider_completed\":{\"type\":\"boolean\"},\"my_rating\":{\"type\":[\"integer\",\"null\"],\"minimum\":1,\"maximum\":5},\"received_rating\":{\"type\":[\"integer\",\"null\"],\"minimum\":1,\"maximum\":5}},\"required\":[\"id\",\"pickup\",\"destination\",\"preference\",\"fare_bdt\",\"status\",\"created_at\",\"passenger_name\",\"rider_name\",\"passenger_started\",\"rider_started\",\"passenger_completed\",\"rider_completed\",\"my_rating\",\"received_rating\"],\"additionalProperties\":false},\"admin-dashboard\":{\"type\":\"object\",\"properties\":{\"stats\":{\"type\":\"object\",\"properties\":{\"students\":{\"type\":\"integer\",\"minimum\":0},\"approved_riders\":{\"type\":\"integer\",\"minimum\":0},\"pending_verifications\":{\"type\":\"integer\",\"minimum\":0},\"rides_by_status\":{\"type\":\"object\",\"properties\":{\"requested\":{\"type\":\"integer\",\"minimum\":0},\"accepted\":{\"type\":\"integer\",\"minimum\":0},\"in_progress\":{\"type\":\"integer\",\"minimum\":0},\"completed\":{\"type\":\"integer\",\"minimum\":0},\"cancelled\":{\"type\":\"integer\",\"minimum\":0}},\"required\":[\"requested\",\"accepted\",\"in_progress\",\"completed\",\"cancelled\"],\"additionalProperties\":false}},\"required\":[\"students\",\"approved_riders\",\"pending_verifications\",\"rides_by_status\"],\"additionalProperties\":false},\"accounts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"name\":{\"type\":\"string\",\"minLength\":1},\"email\":{\"type\":\"string\",\"pattern\":\"@campus\\\\.example$\"},\"roles\":{\"type\":\"array\",\"items\":{\"enum\":[\"passenger\",\"rider\",\"admin\"]},\"minItems\":1},\"women_only_eligible\":{\"type\":\"boolean\"},\"verification_status\":{\"enum\":[null,\"pending\",\"approved\",\"rejected\"]}},\"required\":[\"id\",\"name\",\"email\",\"roles\",\"women_only_eligible\",\"verification_status\"],\"additionalProperties\":false},\"minItems\":0},\"pending_verifications\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"user_id\":{\"type\":\"integer\",\"minimum\":1},\"mock_reference\":{\"type\":\"string\",\"pattern\":\"^MOCK-[A-Z0-9]{3,12}$\"},\"status\":{\"enum\":[\"pending\",\"approved\",\"rejected\"]},\"name\":{\"type\":\"string\",\"minLength\":1},\"email\":{\"type\":\"string\",\"pattern\":\"@campus\\\\.example$\"}},\"required\":[\"user_id\",\"mock_reference\",\"status\",\"name\",\"email\"],\"additionalProperties\":false},\"minItems\":0},\"rides\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"minimum\":1},\"pickup\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"destination\":{\"enum\":[\"north_gate\",\"main_library\",\"engineering_hall\",\"student_center\",\"residence_quad\"]},\"preference\":{\"enum\":[\"regular\",\"women_only\"]},\"fare_bdt\":{\"type\":\"integer\",\"minimum\":1},\"status\":{\"enum\":[\"requested\",\"accepted\",\"in_progress\",\"completed\",\"cancelled\"]},\"created_at\":{\"type\":\"string\",\"format\":\"date-time\"}},\"required\":[\"id\",\"pickup\",\"destination\",\"preference\",\"fare_bdt\",\"status\",\"created_at\"],\"additionalProperties\":false},\"minItems\":0}},\"required\":[\"stats\",\"accounts\",\"pending_verifications\",\"rides\"],\"additionalProperties\":false},\"domain-error\":{\"type\":\"object\",\"properties\":{\"detail\":{\"type\":\"string\",\"minLength\":1}},\"required\":[\"detail\"],\"additionalProperties\":false},\"validation-error\":{\"type\":\"object\",\"properties\":{\"detail\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"loc\":{\"type\":\"array\",\"items\":{\"type\":[\"string\",\"integer\"]},\"minItems\":1},\"msg\":{\"type\":\"string\",\"minLength\":1},\"type\":{\"type\":\"string\",\"minLength\":1}},\"required\":[\"loc\",\"msg\",\"type\"],\"additionalProperties\":false},\"minItems\":1}},\"required\":[\"detail\"],\"additionalProperties\":false}}",
+      "type": "string",
+      "description": "Shared JSON schemas for positive and negative API responses."
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const base = String(pm.variables.get('base_url') || '');",
+          "const loopback = /^http:\\/\\/(?:127\\.0\\.0\\.1|localhost|\\[::1\\]):[1-9]\\d{0,4}$/.test(base);",
+          "if (!loopback || Number(base.split(':').pop()) > 65535) {",
+          "    pm.test('Use a local HTTP base_url with an explicit port', function () {",
+          "        pm.expect.fail('Select the CampusRide local environment.');",
+          "    });",
+          "    pm.execution.setNextRequest(null);",
+          "    pm.execution.skipRequest();",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// The OpenAPI document describes credential inputs. It contains no account responses.",
+          "if (!pm.info.requestName.startsWith('API-002 ') && pm.response.code !== 204) {",
+          "    pm.test('Response contains no passwords, session secrets, or phone fields', function () {",
+          "        const values = [pm.response.json()];",
+          "        while (values.length) {",
+          "            const value = values.pop();",
+          "            if (value && typeof value === 'object') {",
+          "                for (const [key, entry] of Object.entries(value)) {",
+          "                    pm.expect(key).not.to.match(/password|phone|token|secret|session_id|session_key|cookie/i);",
+          "                    values.push(entry);",
+          "                }",
+          "            }",
+          "        }",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Health and authentication",
+      "item": [
+        {
+          "name": "API-001 Health returns ok",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/health",
+            "description": "Confirm the local server can respond. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the health schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"health\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-002 Check the normal API contract",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/openapi.json",
+            "description": "Confirm the normal schema has the quote endpoint and excludes the exercise-only fare route. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the openapi schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"openapi\"]);",
+                  "});",
+                  "pm.test(\"Normal API schema is loaded\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.paths).to.have.property('/api/rides/quote');",
+                  "    pm.expect(body.paths).not.to.have.property('/api/rides/{ride_id}/fare');",
+                  "});",
+                  "const paths = pm.response.json().paths;",
+                  "if (!paths || paths['/api/rides/{ride_id}/fare']) pm.execution.setNextRequest(null);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-003 Reject an anonymous profile read",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/me",
+            "description": "Verify that the profile requires authentication. Expected HTTP 401."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-004 Reject a wrong password",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/login",
+            "description": "Reject incorrect credentials and withhold a session cookie. Expected HTTP 401.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{mira_email}}\",\n  \"password\": \"IncorrectDemo9!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Failed login issues no cookie\", function () {",
+                  "    pm.expect(pm.response.headers.has('Set-Cookie')).to.be.false;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-005 Reject a non-campus registration",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/register",
+            "description": "Require a campus-domain email without returning submitted credential data. Expected HTTP 422.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API Student\",\n  \"email\": \"api-student@outside.example\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "pm.test(\"JSON matches the validation-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"validation-error\"]);",
+                  "});",
+                  "pm.test(\"Validation points to email\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail.some(issue => issue.loc.includes(\"email\"))).to.be.true;",
+                  "});",
+                  "pm.test(\"Validation does not echo the submitted password\", function () {",
+                  "    pm.expect(pm.response.text()).not.to.include(pm.environment.get('demo_password'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-006 Register a fictional student",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/register",
+            "description": "Create a passenger account with no verification record. Expected HTTP 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API Student\",\n  \"email\": \"{{student_email}}\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"JSON matches the profile schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"profile\"]);",
+                  "});",
+                  "pm.test(\"Registration grants passenger access\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.roles).to.eql([\"passenger\"]);",
+                  "    pm.expect(body.verification_status).to.eql(null);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-007 Reject duplicate campus email",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/register",
+            "description": "Reject a second registration for the same campus address. Expected HTTP 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API Student\",\n  \"email\": \"{{student_email}}\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"already has an account\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-008 Sign in as student",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/login",
+            "description": "Authenticate student and save the run-scoped HTTP-only cookie. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{student_email}}\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the profile schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"profile\"]);",
+                  "});",
+                  "pm.test(\"Response identifies this fictional session and its roles\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.email).to.eql(pm.environment.get('student_email'));",
+                  "    pm.expect(body.roles).to.eql([\"passenger\"]);",
+                  "    pm.expect(body.women_only_eligible).to.eql(false);",
+                  "    pm.expect(body.verification_status).to.eql(null);",
+                  "});",
+                  "pm.test(\"Session cookie has the documented attributes\", function () {",
+                  "    const header = pm.response.headers.get('Set-Cookie') || '';",
+                  "    pm.expect(header).to.match(/;\\s*HttpOnly(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*SameSite=lax(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*Max-Age=43200(?:;|$)/i);",
+                  "    const cookie = /^campusride_session=[A-Za-z0-9_-]+(?=;|$)/.exec(header);",
+                  "    pm.expect(Boolean(cookie)).to.be.true;",
+                  "    pm.variables.set('student_cookie', cookie[0]);",
+                  "    const id = pm.response.json().id;",
+                  "    pm.expect(Number.isInteger(id)).to.be.true;",
+                  "    pm.variables.set('student_id', id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-009 Sign in as mira",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/login",
+            "description": "Authenticate mira and save the run-scoped HTTP-only cookie. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{mira_email}}\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the profile schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"profile\"]);",
+                  "});",
+                  "pm.test(\"Response identifies this fictional session and its roles\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.email).to.eql(pm.environment.get('mira_email'));",
+                  "    pm.expect(body.roles).to.eql([\"passenger\"]);",
+                  "    pm.expect(body.women_only_eligible).to.eql(true);",
+                  "    pm.expect(body.verification_status).to.eql(null);",
+                  "});",
+                  "pm.test(\"Session cookie has the documented attributes\", function () {",
+                  "    const header = pm.response.headers.get('Set-Cookie') || '';",
+                  "    pm.expect(header).to.match(/;\\s*HttpOnly(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*SameSite=lax(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*Max-Age=43200(?:;|$)/i);",
+                  "    const cookie = /^campusride_session=[A-Za-z0-9_-]+(?=;|$)/.exec(header);",
+                  "    pm.expect(Boolean(cookie)).to.be.true;",
+                  "    pm.variables.set('mira_cookie', cookie[0]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-010 Sign in as tariq",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/login",
+            "description": "Authenticate tariq and save the run-scoped HTTP-only cookie. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{tariq_email}}\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the profile schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"profile\"]);",
+                  "});",
+                  "pm.test(\"Response identifies this fictional session and its roles\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.email).to.eql(pm.environment.get('tariq_email'));",
+                  "    pm.expect(body.roles).to.eql([\"passenger\", \"rider\"]);",
+                  "    pm.expect(body.women_only_eligible).to.eql(false);",
+                  "    pm.expect(body.verification_status).to.eql(\"approved\");",
+                  "});",
+                  "pm.test(\"Session cookie has the documented attributes\", function () {",
+                  "    const header = pm.response.headers.get('Set-Cookie') || '';",
+                  "    pm.expect(header).to.match(/;\\s*HttpOnly(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*SameSite=lax(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*Max-Age=43200(?:;|$)/i);",
+                  "    const cookie = /^campusride_session=[A-Za-z0-9_-]+(?=;|$)/.exec(header);",
+                  "    pm.expect(Boolean(cookie)).to.be.true;",
+                  "    pm.variables.set('tariq_cookie', cookie[0]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-011 Sign in as anika",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/login",
+            "description": "Authenticate anika and save the run-scoped HTTP-only cookie. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{anika_email}}\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the profile schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"profile\"]);",
+                  "});",
+                  "pm.test(\"Response identifies this fictional session and its roles\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.email).to.eql(pm.environment.get('anika_email'));",
+                  "    pm.expect(body.roles).to.eql([\"passenger\", \"rider\"]);",
+                  "    pm.expect(body.women_only_eligible).to.eql(true);",
+                  "    pm.expect(body.verification_status).to.eql(\"approved\");",
+                  "});",
+                  "pm.test(\"Session cookie has the documented attributes\", function () {",
+                  "    const header = pm.response.headers.get('Set-Cookie') || '';",
+                  "    pm.expect(header).to.match(/;\\s*HttpOnly(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*SameSite=lax(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*Max-Age=43200(?:;|$)/i);",
+                  "    const cookie = /^campusride_session=[A-Za-z0-9_-]+(?=;|$)/.exec(header);",
+                  "    pm.expect(Boolean(cookie)).to.be.true;",
+                  "    pm.variables.set('anika_cookie', cookie[0]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-012 Sign in as admin",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/login",
+            "description": "Authenticate admin and save the run-scoped HTTP-only cookie. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{demo_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the profile schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"profile\"]);",
+                  "});",
+                  "pm.test(\"Response identifies this fictional session and its roles\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.email).to.eql(pm.environment.get('admin_email'));",
+                  "    pm.expect(body.roles).to.eql([\"admin\"]);",
+                  "    pm.expect(body.women_only_eligible).to.eql(false);",
+                  "    pm.expect(body.verification_status).to.eql(null);",
+                  "});",
+                  "pm.test(\"Session cookie has the documented attributes\", function () {",
+                  "    const header = pm.response.headers.get('Set-Cookie') || '';",
+                  "    pm.expect(header).to.match(/;\\s*HttpOnly(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*SameSite=lax(?:;|$)/i);",
+                  "    pm.expect(header).to.match(/;\\s*Max-Age=43200(?:;|$)/i);",
+                  "    const cookie = /^campusride_session=[A-Za-z0-9_-]+(?=;|$)/.exec(header);",
+                  "    pm.expect(Boolean(cookie)).to.be.true;",
+                  "    pm.variables.set('admin_cookie', cookie[0]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 Verification and admin decisions",
+      "item": [
+        {
+          "name": "API-013 Read a missing verification",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rider/verification",
+            "description": "Read JSON null before the first submission. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the no-verification schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"no-verification\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-014 Reject an invalid mock reference",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rider/verification",
+            "description": "Validate the required mock-reference format. Expected HTTP 422.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mock_reference\": \"invalid\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "pm.test(\"JSON matches the validation-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"validation-error\"]);",
+                  "});",
+                  "pm.test(\"Validation points to mock_reference\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail.some(issue => issue.loc.includes(\"mock_reference\"))).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-015 Submit rider verification",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rider/verification",
+            "description": "Create a pending verification request. Expected HTTP 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mock_reference\": \"MOCK-API01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"JSON matches the verification schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"verification\"]);",
+                  "});",
+                  "pm.test(\"Submission is pending\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"pending\");",
+                  "    pm.expect(body.mock_reference).to.eql(\"MOCK-API01\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-016 Student cannot decide a verification",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/admin/verifications/{{student_id}}/decision",
+            "description": "Reject a review decision by a student. Expected HTTP 403.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"admin account\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-017 Student cannot read the admin dashboard",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/admin/dashboard",
+            "description": "Restrict dashboard accounts and statistics to admins. Expected HTTP 403."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-018 Admin sees the pending verification and statistics",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{admin_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/admin/dashboard",
+            "description": "Read the dashboard and locate the same student's pending request. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the admin-dashboard schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"admin-dashboard\"]);",
+                  "});",
+                  "pm.test(\"Admin queue contains the submitted case and statistics match the queue\", function () {",
+                  "    const body = pm.response.json();",
+                  "    const studentId = Number(pm.variables.get('student_id'));",
+                  "    const pending = body.pending_verifications.find(item => item.user_id === studentId);",
+                  "    pm.expect(pending).to.include({ status: 'pending', mock_reference: 'MOCK-API01' });",
+                  "    pm.expect(body.stats.pending_verifications).to.eql(body.pending_verifications.length);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-019 Admin rejects the pending request",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{admin_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/admin/verifications/{{student_id}}/decision",
+            "description": "Record a rejection for an existing pending request. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"rejected\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the verification schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"verification\"]);",
+                  "});",
+                  "pm.test(\"Decision is rejected\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"rejected\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-020 Student reapplies after rejection",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rider/verification",
+            "description": "Replace a rejected verification with a new pending request. Expected HTTP 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mock_reference\": \"MOCK-API02\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"JSON matches the verification schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"verification\"]);",
+                  "});",
+                  "pm.test(\"New reference is pending\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"pending\");",
+                  "    pm.expect(body.mock_reference).to.eql(\"MOCK-API02\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-021 Admin approves the new request",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{admin_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/admin/verifications/{{student_id}}/decision",
+            "description": "Approve the pending resubmission. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the verification schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"verification\"]);",
+                  "});",
+                  "pm.test(\"Second application is approved\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"approved\");",
+                  "    pm.expect(body.mock_reference).to.eql(\"MOCK-API02\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-022 Admin cannot review again after approval",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{admin_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/admin/verifications/{{student_id}}/decision",
+            "description": "Reject a further decision on a reviewed request. Expected HTTP 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"rejected\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"already been reviewed\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-023 Approved student retains passenger access",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/me",
+            "description": "Verify both roles are available from the same student session. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the profile schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"profile\"]);",
+                  "});",
+                  "pm.test(\"Approval enables rider access\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.roles).to.eql([\"passenger\", \"rider\"]);",
+                  "    pm.expect(body.verification_status).to.eql(\"approved\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 Quote, book and assign a regular ride",
+      "item": [
+        {
+          "name": "API-024 Require different pickup and destination stops",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/quote",
+            "description": "Reject a route with the same pickup and destination. Expected HTTP 422.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup\": \"north_gate\",\n  \"destination\": \"north_gate\",\n  \"preference\": \"regular\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "pm.test(\"JSON matches the validation-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"validation-error\"]);",
+                  "});",
+                  "pm.test(\"Validation points to body\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail.some(issue => issue.loc.includes(\"body\"))).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-025 Quote a fixed regular fare",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/quote",
+            "description": "Quote North Gate to Residence Quad at 80 BDT. Expected HTTP 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup\": \"north_gate\",\n  \"destination\": \"residence_quad\",\n  \"preference\": \"regular\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"JSON matches the quote schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"quote\"]);",
+                  "});",
+                  "pm.test(\"Quote is 80 BDT and supplies an ID\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.fare_bdt).to.eql(80);",
+                  "    pm.expect(body.id).to.match(/^[a-f0-9]{32}$/);",
+                  "    pm.variables.set('regular_quote_id', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-026 Hide someone else's quote",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{anika_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides",
+            "description": "Prevent Anika from redeeming Mira's quote. Expected HTTP 404.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote_id\": \"{{regular_quote_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"Fare quote not found\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-027 Reject a client-supplied fare override",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides",
+            "description": "Reject the extra fare field on a booking. Expected HTTP 422.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote_id\": \"{{regular_quote_id}}\",\n  \"fare_bdt\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "pm.test(\"JSON matches the validation-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"validation-error\"]);",
+                  "});",
+                  "pm.test(\"Validation points to fare_bdt\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail.some(issue => issue.loc.includes(\"fare_bdt\"))).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-028 Book the regular ride at the quoted fare",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides",
+            "description": "Redeem the quote once and capture the new ride ID. Expected HTTP 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote_id\": \"{{regular_quote_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Ride retains the quoted fare and starts unassigned\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql('requested');",
+                  "    pm.expect(body.preference).to.eql('regular');",
+                  "    pm.expect(body.rider_name).to.be.null;",
+                  "    pm.expect(body.fare_bdt).to.eql(80);",
+                  "    pm.expect(Number.isInteger(body.id)).to.be.true;",
+                  "    pm.variables.set('ride_id', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-029 Reject a used quote",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides",
+            "description": "Reject a second booking from the same quote. Expected HTTP 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote_id\": \"{{regular_quote_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"already used\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-030 Passenger finds the requested ride in their list",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides",
+            "description": "List the passenger's own rides with summary fields only. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride-list schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride-list\"]);",
+                  "});",
+                  "pm.test(\"List includes the workflow ride\", function () {",
+                  "    const body = pm.response.json();",
+                  "    const id = Number(pm.variables.get('ride_id'));",
+                  "    pm.expect(Number.isInteger(id) && id > 0).to.be.true;",
+                  "    pm.expect(body.some(ride => ride.id === id)).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-031 Approved rider sees the regular request",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/available",
+            "description": "List eligible requests with an allowlist of public fields. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride-list schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride-list\"]);",
+                  "});",
+                  "pm.test(\"List includes the workflow ride\", function () {",
+                  "    const body = pm.response.json();",
+                  "    const id = Number(pm.variables.get('ride_id'));",
+                  "    pm.expect(Number.isInteger(id) && id > 0).to.be.true;",
+                  "    pm.expect(body.some(ride => ride.id === id)).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-032 Unverified student cannot browse available rides",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/available",
+            "description": "Enforce rider approval for listing. Expected HTTP 403."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"Rider approval\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-033 Unverified student cannot accept Anika's ride",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/5/accept",
+            "description": "Check the approval guard on a different passenger's seeded open regular ride. Expected HTTP 403."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"Rider approval\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-034 Unassigned rider cannot see ride details",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{anika_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}",
+            "description": "Hide participant details from an unrelated approved rider. Expected HTTP 404."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"Ride not found\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-035 Tariq accepts the regular ride",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/accept",
+            "description": "Assign the rider and preserve the price. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Acceptance records Tariq and preserves 80 BDT\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"accepted\");",
+                  "    pm.expect(body.rider_name).to.eql(\"Tariq Hasan\");",
+                  "    pm.expect(body.fare_bdt).to.eql(80);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-036 Second rider cannot accept the same request",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{anika_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/accept",
+            "description": "Reject Anika's sequential acceptance after Tariq has claimed the ride. Expected HTTP 409."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"no longer available\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 Trip confirmations and rating disclosure",
+      "item": [
+        {
+          "name": "API-037 Reject completion before the trip starts",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/complete",
+            "description": "Prevent completion while the ride is still accepted. Expected HTTP 409."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-038 Passenger confirms the start",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/start",
+            "description": "Record the first start confirmation without starting the trip. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Only the passenger start flag is set\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"accepted\");",
+                  "    pm.expect(body.passenger_started).to.eql(true);",
+                  "    pm.expect(body.rider_started).to.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-039 Rider confirms the start",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/start",
+            "description": "Move the ride into progress after both start confirmations. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Both start flags are set\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"in_progress\");",
+                  "    pm.expect(body.passenger_started).to.eql(true);",
+                  "    pm.expect(body.rider_started).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-040 Reject cancellation after start",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/cancel",
+            "description": "Enforce the cancellation boundary after both confirmations. Expected HTTP 409."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-041 Rider confirms completion first",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/complete",
+            "description": "Keep the trip in progress with just one completion. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Only the rider completion flag is set\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"in_progress\");",
+                  "    pm.expect(body.passenger_completed).to.eql(false);",
+                  "    pm.expect(body.rider_completed).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-042 Passenger confirms completion second",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/complete",
+            "description": "Complete the trip and preserve the original fare. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Both completion flags are set at the original fare\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"completed\");",
+                  "    pm.expect(body.passenger_completed).to.eql(true);",
+                  "    pm.expect(body.rider_completed).to.eql(true);",
+                  "    pm.expect(body.fare_bdt).to.eql(80);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-043 Reject a rating outside the valid bounds",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/rating",
+            "description": "Reject a score greater than five. Expected HTTP 422.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 6\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "pm.test(\"JSON matches the validation-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"validation-error\"]);",
+                  "});",
+                  "pm.test(\"Validation points to score\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail.some(issue => issue.loc.includes(\"score\"))).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-044 Passenger leaves the first rating",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/rating",
+            "description": "Record the passenger's own score while the received score is empty. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Passenger sees their own rating\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.my_rating).to.eql(5);",
+                  "    pm.expect(body.received_rating).to.eql(null);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-045 Rider cannot see the first rating yet",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}",
+            "description": "Hide both rating fields from the rider until they submit. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Rider receives no score before rating\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.my_rating).to.eql(null);",
+                  "    pm.expect(body.received_rating).to.eql(null);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-046 Rider submits the second rating",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/rating",
+            "description": "Reveal the received score after both submissions. Expected HTTP 200.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Rider sees both scores after submitting\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.my_rating).to.eql(4);",
+                  "    pm.expect(body.received_rating).to.eql(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-047 Passenger sees the rating and final fare",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}",
+            "description": "Read the received score and unchanged fare with the allowed detail fields. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Passenger sees their own and received scores at the original fare\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.my_rating).to.eql(5);",
+                  "    pm.expect(body.received_rating).to.eql(4);",
+                  "    pm.expect(body.fare_bdt).to.eql(80);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-048 Admin can inspect the trip with ratings hidden",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{admin_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}",
+            "description": "Allow the admin to see trip state while withholding participant ratings. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Admin sees only the trip's completion status\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"completed\");",
+                  "    pm.expect(body.my_rating).to.eql(null);",
+                  "    pm.expect(body.received_rating).to.eql(null);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-049 Reject a duplicate rating",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{ride_id}}/rating",
+            "description": "Prevent replacing a participant's submitted score. Expected HTTP 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 Women-only eligibility and cancellation",
+      "item": [
+        {
+          "name": "API-050 Ineligible student cannot quote a women-only ride",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/quote",
+            "description": "Reject the preference for Tariq's profile. Expected HTTP 403.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup\": \"main_library\",\n  \"destination\": \"residence_quad\",\n  \"preference\": \"women_only\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"ineligible for women-only rides\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-051 Eligible student quotes a women-only ride",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/quote",
+            "description": "Allow Mira to quote the selected route at 70 BDT. Expected HTTP 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pickup\": \"main_library\",\n  \"destination\": \"residence_quad\",\n  \"preference\": \"women_only\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"JSON matches the quote schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"quote\"]);",
+                  "});",
+                  "pm.test(\"Quote is 70 BDT and supplies an ID\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.fare_bdt).to.eql(70);",
+                  "    pm.expect(body.id).to.match(/^[a-f0-9]{32}$/);",
+                  "    pm.variables.set('women_quote_id', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-052 Book the women-only request",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rides",
+            "description": "Create an unassigned women-only ride at the quoted price. Expected HTTP 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quote_id\": \"{{women_quote_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Ride retains the quoted fare and starts unassigned\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql('requested');",
+                  "    pm.expect(body.preference).to.eql('women_only');",
+                  "    pm.expect(body.rider_name).to.be.null;",
+                  "    pm.expect(body.fare_bdt).to.eql(70);",
+                  "    pm.expect(Number.isInteger(body.id)).to.be.true;",
+                  "    pm.variables.set('women_ride_id', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-053 Filter women-only rides out for an ineligible rider",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/available",
+            "description": "Exclude the restricted request from Tariq's list. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride-list schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride-list\"]);",
+                  "});",
+                  "pm.test(\"List filters out the workflow ride\", function () {",
+                  "    const body = pm.response.json();",
+                  "    const id = Number(pm.variables.get('women_ride_id'));",
+                  "    pm.expect(Number.isInteger(id) && id > 0).to.be.true;",
+                  "    pm.expect(body.some(ride => ride.id === id)).to.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-054 Show women-only rides to an eligible rider",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{anika_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/available",
+            "description": "Include the same request in Anika's list. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride-list schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride-list\"]);",
+                  "});",
+                  "pm.test(\"List includes the workflow ride\", function () {",
+                  "    const body = pm.response.json();",
+                  "    const id = Number(pm.variables.get('women_ride_id'));",
+                  "    pm.expect(Number.isInteger(id) && id > 0).to.be.true;",
+                  "    pm.expect(body.some(ride => ride.id === id)).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-055 Reject ineligible acceptance",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{tariq_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{women_ride_id}}/accept",
+            "description": "Apply women-only restrictions even on a direct acceptance request. Expected HTTP 403."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"ineligible for women-only rides\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-056 Anika can accept the women-only ride",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{anika_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{women_ride_id}}/accept",
+            "description": "Record the eligible assignment and the original price. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Eligible rider is assigned\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"accepted\");",
+                  "    pm.expect(body.rider_name).to.eql(\"Anika Karim\");",
+                  "    pm.expect(body.fare_bdt).to.eql(70);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-057 Assigned rider cancels before start",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{anika_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{women_ride_id}}/cancel",
+            "description": "Cancel the accepted trip before both start confirmations. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Ride is cancelled\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"cancelled\");",
+                  "    pm.expect(body.fare_bdt).to.eql(70);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-058 Passenger observes the cancelled state",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{mira_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{women_ride_id}}",
+            "description": "Read the persisted cancellation from the passenger's session. Expected HTTP 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"JSON matches the ride schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"ride\"]);",
+                  "});",
+                  "pm.test(\"Cancellation is persisted\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(\"cancelled\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-059 Cancelled ride cannot be accepted again",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{anika_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rides/{{women_ride_id}}/accept",
+            "description": "Keep the cancelled request unavailable for reassignment. Expected HTTP 409."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});",
+                  "pm.test(\"Error describes the enforced rule\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.detail).to.include(\"no longer available\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 Sign-out and revocation",
+      "item": [
+        {
+          "name": "API-060 Student signs out",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/logout",
+            "description": "Revoke the student session and expire the client cookie. Expected HTTP 204."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.eql('');",
+                  "});",
+                  "pm.test(\"Logout expires the cookie\", function () {",
+                  "    pm.expect(pm.response.headers.get('Set-Cookie')).to.match(/Max-Age=0/i);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "API-061 Previously issued cookie is rejected after logout",
+          "protocolProfileBehavior": {
+            "disableCookies": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{student_cookie}}"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/me",
+            "description": "Use the old test cookie once to verify server-side invalidation. Expected HTTP 401."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test(\"JSON matches the domain-error schema\", function () {",
+                  "    const shapes = JSON.parse(pm.collectionVariables.get('response_shapes'));",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.match(/^application\\/json(?:;|$)/i);",
+                  "    pm.response.to.have.jsonSchema(shapes[\"domain-error\"]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}
